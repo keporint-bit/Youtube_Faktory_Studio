@@ -14,12 +14,24 @@ THUMBS = os.path.join(BASE, "thumbnails")
 os.makedirs(SALIDA, exist_ok=True)
 os.makedirs(THUMBS, exist_ok=True)
 
-# Conectar Google Sheets
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+# ────────────── CONEXIÓN GOOGLE SHEETS (Render compatible) ──────────────
+import os
 import json
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/spreadsheets"
+]
+
+# Leer credenciales desde variable de entorno (Render)
 creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
 creds = ServiceAccountCredentials.from_json(creds_dict, scope)
 client = gspread.authorize(creds)
+
+# Abrir la hoja
 book = client.open(SPREADSHEET_NAME)
 
 # Buscar próxima fila PENDIENTE
