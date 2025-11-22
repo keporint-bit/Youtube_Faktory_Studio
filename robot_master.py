@@ -14,7 +14,7 @@ THUMBS = os.path.join(BASE, "thumbnails")
 os.makedirs(SALIDA, exist_ok=True)
 os.makedirs(THUMBS, exist_ok=True)
 
-# ────────────── CONEXIÓN GOOGLE SHEETS (Render compatible) ──────────────
+# ────────────── CONEXIÓN GOOGLE SHEETS (Render + Python 3.13) ──────────────
 import os
 import json
 import gspread
@@ -22,14 +22,18 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 scope = [
     "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/drive",
-    "https://www.googleapis.com/auth/spreadsheets"
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
 ]
 
-# Leer credenciales desde variable de entorno (Render)
+# CREDENCIALES DESDE VARIABLE DE ENTORNO (Render)
 creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
-creds = ServiceAccountCredentials.from_json(creds_dict, scope)
+
+# FORMA CORRECTA PARA VERSIONES NUEVAS
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
 client = gspread.authorize(creds)
+book = client.open(SPREADSHEET_NAME)
 
 # Abrir la hoja
 book = client.open(SPREADSHEET_NAME)
