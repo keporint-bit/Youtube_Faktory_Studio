@@ -16,7 +16,10 @@ os.makedirs(THUMBS, exist_ok=True)
 
 # Conectar Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-client = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_name("client_secret.json", scope))
+import json
+creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+creds = ServiceAccountCredentials.from_json(creds_dict, scope)
+client = gspread.authorize(creds)
 book = client.open(SPREADSHEET_NAME)
 
 # Buscar próxima fila PENDIENTE
